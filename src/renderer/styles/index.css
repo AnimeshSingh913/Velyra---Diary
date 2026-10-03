@@ -1,0 +1,157 @@
+/* ============================================================
+   Antigravity Diary — Global Styles
+   Dark, warm, magical aesthetic
+   ============================================================ */
+
+@import './variables.css';
+@import './password-dialog.css';
+@import './pages.css';
+@import './editor.css';
+@import './panels.css';
+@import './command-bar.css';
+
+/* ─── Reset ─────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+}
+
+/* ─── App Shell ─────────────────────────────────────────────── */
+.app {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Overlays ──────────────────────────────────────────────── */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.overlay--center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+}
+
+/* ─── Loading ───────────────────────────────────────────────── */
+.loading-spinner-icon {
+  width: 36px;
+  height: 36px;
+  color: var(--accent-gold);
+  animation: spin 1s linear infinite;
+  opacity: 0.8;
+}
+
+.loading-text {
+  margin-top: 1.2rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Diary Hint (closed state) ─────────────────────────────── */
+.diary-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: none;
+  animation: fadeInUp 1.5s ease 0.5s both;
+}
+
+.diary-hint p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ─── Diary Open UI ─────────────────────────────────────────── */
+.diary-open-ui {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.btn-close-diary {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  z-index: 25;
+  pointer-events: auto;
+  background: rgba(26, 15, 10, 0.8);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
+}
+
+.btn-close-diary:hover {
+  color: var(--accent-gold);
+  border-color: var(--accent-gold-dim);
+  background: rgba(26, 15, 10, 0.95);
+}
+
+/* ─── Three.js Scene Container ──────────────────────────────── */
+.diary-scene-container canvas {
+  display: block;
+  outline: none;
+  background-color: transparent !important;
+}

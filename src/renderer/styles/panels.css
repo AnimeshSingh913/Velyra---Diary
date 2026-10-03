@@ -1,0 +1,484 @@
+/* ============================================================
+   Search & Settings Panel Styles
+   ============================================================ */
+
+/* ─── Search Panel ───────────────────────────────────────────── */
+.search-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 400;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8vh;
+  animation: searchFadeIn 0.2s ease both;
+}
+
+.search-panel__backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 3, 2, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+@keyframes searchFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.search-panel__container {
+  position: relative;
+  width: 90%;
+  max-width: 560px;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(165deg, #1a120d 0%, #15100b 100%);
+  border: 1px solid rgba(184, 148, 64, 0.2);
+  border-radius: 12px;
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(184, 148, 64, 0.1);
+  animation: searchSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  overflow: hidden;
+}
+
+@keyframes searchSlideDown {
+  from { opacity: 0; transform: translateY(-20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ─── Search Input ───────────────────────────────────────────── */
+.search-panel__input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(184, 148, 64, 0.12);
+}
+
+.search-panel__icon {
+  font-size: 1rem;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.search-panel__input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #e8dcc8;
+  font-size: 0.92rem;
+  font-family: var(--font-ui);
+  outline: none;
+}
+
+.search-panel__input::placeholder {
+  color: rgba(232, 220, 200, 0.35);
+}
+
+.search-panel__close {
+  background: none;
+  border: none;
+  color: rgba(232, 220, 200, 0.4);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.15s ease;
+}
+
+.search-panel__close:hover {
+  color: #e8dcc8;
+}
+
+/* ─── Search Results ─────────────────────────────────────────── */
+.search-panel__results {
+  overflow-y: auto;
+  max-height: calc(60vh - 60px);
+  padding: 0.3rem;
+}
+
+.search-panel__results::-webkit-scrollbar {
+  width: 4px;
+}
+
+.search-panel__results::-webkit-scrollbar-thumb {
+  background: rgba(184, 148, 64, 0.2);
+  border-radius: 2px;
+}
+
+.search-panel__status {
+  padding: 1.2rem;
+  text-align: center;
+  color: rgba(232, 220, 200, 0.4);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.search-result {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0.7rem 0.9rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.1s ease;
+  color: #e8dcc8;
+}
+
+.search-result:hover {
+  background: rgba(184, 148, 64, 0.1);
+}
+
+.search-result__title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  margin-bottom: 0.15rem;
+}
+
+.search-result__meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.search-result__date {
+  font-size: 0.68rem;
+  color: rgba(232, 220, 200, 0.45);
+}
+
+.search-result__preview {
+  font-size: 0.72rem;
+  color: rgba(232, 220, 200, 0.55);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Settings Panel ─────────────────────────────────────────── */
+.settings-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: searchFadeIn 0.2s ease both;
+}
+
+.settings-panel__backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 3, 2, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.settings-panel__container {
+  position: relative;
+  width: 90%;
+  max-width: 520px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(165deg, #1a120d 0%, #15100b 100%);
+  border: 1px solid rgba(184, 148, 64, 0.2);
+  border-radius: 12px;
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(184, 148, 64, 0.1);
+  overflow: hidden;
+  animation: searchSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.settings-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid rgba(184, 148, 64, 0.12);
+}
+
+.settings-panel__title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e8dcc8;
+  margin: 0;
+}
+
+.settings-panel__close {
+  background: none;
+  border: none;
+  color: rgba(232, 220, 200, 0.4);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.15s ease;
+}
+
+.settings-panel__close:hover {
+  color: #e8dcc8;
+}
+
+.settings-panel__body {
+  overflow-y: auto;
+  padding: 0.5rem 1.2rem 1.2rem;
+}
+
+.settings-panel__body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.settings-panel__body::-webkit-scrollbar-thumb {
+  background: rgba(184, 148, 64, 0.2);
+  border-radius: 2px;
+}
+
+/* ─── Settings Section ───────────────────────────────────────── */
+.settings-section {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(184, 148, 64, 0.08);
+}
+
+.settings-section:last-child {
+  border-bottom: none;
+}
+
+.settings-section__title {
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #c5a050;
+  margin: 0 0 0.7rem;
+}
+
+.settings-description {
+  font-size: 0.75rem;
+  color: rgba(232, 220, 200, 0.5);
+  line-height: 1.6;
+  margin: 0 0 0.6rem;
+}
+
+/* ─── Settings Fields ────────────────────────────────────────── */
+.settings-field {
+  margin-bottom: 0.6rem;
+}
+
+.settings-field--inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.settings-field--row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.settings-label {
+  display: block;
+  font-size: 0.72rem;
+  color: rgba(232, 220, 200, 0.6);
+  margin-bottom: 0.25rem;
+  font-family: var(--font-ui);
+}
+
+.settings-field--inline .settings-label {
+  margin-bottom: 0;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(184, 148, 64, 0.15);
+  border-radius: var(--radius-sm);
+  color: #e8dcc8;
+  font-size: 0.78rem;
+  font-family: var(--font-ui);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.settings-input:focus {
+  border-color: rgba(184, 148, 64, 0.4);
+  box-shadow: 0 0 0 2px rgba(184, 148, 64, 0.08);
+}
+
+.settings-select {
+  padding: 0.35rem 0.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(184, 148, 64, 0.15);
+  border-radius: var(--radius-sm);
+  color: #e8dcc8;
+  font-size: 0.72rem;
+  font-family: var(--font-ui);
+  outline: none;
+  cursor: pointer;
+}
+
+.settings-select:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.settings-select option {
+  background: #15100b;
+}
+
+/* ─── Toggle Switch ──────────────────────────────────────────── */
+.settings-toggle {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.settings-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.settings-toggle__slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.settings-toggle__slider::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #e8dcc8;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.settings-toggle input:checked + .settings-toggle__slider {
+  background: rgba(184, 148, 64, 0.5);
+}
+
+.settings-toggle input:checked + .settings-toggle__slider::before {
+  transform: translateX(16px);
+}
+
+/* ─── Settings Buttons ───────────────────────────────────────── */
+.settings-btn {
+  padding: 0.4rem 1rem;
+  font-size: 0.75rem;
+  font-family: var(--font-ui);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+}
+
+.settings-btn--primary {
+  background: rgba(184, 148, 64, 0.2);
+  color: #c5a050;
+  border: 1px solid rgba(184, 148, 64, 0.3);
+}
+
+.settings-btn--primary:hover:not(:disabled) {
+  background: rgba(184, 148, 64, 0.3);
+}
+
+.settings-btn--danger {
+  background: rgba(180, 50, 40, 0.15);
+  color: #d4766e;
+  border: 1px solid rgba(180, 50, 40, 0.25);
+}
+
+.settings-btn--danger:hover:not(:disabled) {
+  background: rgba(180, 50, 40, 0.25);
+}
+
+.settings-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Settings Messages ──────────────────────────────────────── */
+.settings-message {
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.settings-message--success {
+  background: rgba(58, 154, 90, 0.12);
+  color: #6dbe88;
+  border: 1px solid rgba(58, 154, 90, 0.2);
+}
+
+.settings-message--error {
+  background: rgba(180, 50, 40, 0.12);
+  color: #d4766e;
+  border: 1px solid rgba(180, 50, 40, 0.2);
+}
+
+/* ─── Top UI Bar ─────────────────────────────────────────────── */
+.diary-top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.3rem;
+  padding: 0 0.8rem;
+  z-index: 200;
+  pointer-events: none;
+  -webkit-app-region: drag;
+}
+
+.diary-top-bar__btn {
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+  background: none;
+  border: none;
+  color: rgba(232, 220, 200, 0.35);
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.diary-top-bar__btn:hover {
+  color: rgba(232, 220, 200, 0.7);
+  background: rgba(184, 148, 64, 0.1);
+}

@@ -1,0 +1,29 @@
+appId: com.velyra.diary
+productName: Velyra
+directories:
+  buildResources: resources
+  output: dist
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!electron.vite.config.*'
+  - '!{.eslintignore,.eslintrc.*,tsconfig.*}'
+  - '!{.env,.env.*,.npmrc}'
+asarUnpack:
+  - resources/**
+  - node_modules/better-sqlite3/**
+win:
+  executableName: Velyra
+  icon: build/icon.png
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: Velyra
+  uninstallDisplayName: Velyra
+  createDesktopShortcut: always

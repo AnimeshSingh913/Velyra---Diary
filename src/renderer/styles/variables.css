@@ -1,0 +1,60 @@
+/* ============================================================
+   Antigravity Diary — Design Tokens
+   Warm, dark, magical color palette
+   ============================================================ */
+
+:root {
+  /* ─── Backgrounds ────────────────────────────────────────── */
+  --bg-primary: #0D0907;
+  --bg-secondary: #1A0F0A;
+  --bg-surface: #1F1410;
+  --bg-elevated: #2A1A14;
+
+  /* ─── Text ───────────────────────────────────────────────── */
+  --text-primary: #F5ECD7;
+  --text-secondary: #C4B69C;
+  --text-muted: #8B7355;
+  --text-on-gold: #1A0F0A;
+
+  /* ─── Accents ────────────────────────────────────────────── */
+  --accent-gold: #C5933A;
+  --accent-gold-light: #D4A94E;
+  --accent-gold-dim: #8B6914;
+  --accent-burgundy: #4A1520;
+  --accent-burgundy-light: #6B2030;
+  --accent-danger: #B43228;
+  --accent-emerald: #3A9A5A;
+
+  /* ─── Page colors ────────────────────────────────────────── */
+  --page-cream: #F5ECD7;
+  --page-ivory: #F0E6CE;
+  --page-edge: #E8DCC8;
+
+  /* ─── Cover colors ───────────────────────────────────────── */
+  --cover-burgundy: #4A1520;
+  --cover-dark: #3D1018;
+  --cover-spine: #351015;
+
+  /* ─── UI elements ────────────────────────────────────────── */
+  --border-subtle: rgba(197, 147, 58, 0.15);
+  --border-medium: rgba(197, 147, 58, 0.3);
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-strong: 0 8px 40px rgba(0, 0, 0, 0.6);
+
+  /* ─── Typography ─────────────────────────────────────────── */
+  --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Cinzel', 'Georgia', serif;
+  --font-serif: 'Crimson Pro', 'Georgia', 'Times New Roman', serif;
+  --font-heading: 'Cinzel', 'Georgia', serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* ─── Transitions ────────────────────────────────────────── */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 600ms ease;
+
+  /* ─── Sizing ─────────────────────────────────────────────── */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}

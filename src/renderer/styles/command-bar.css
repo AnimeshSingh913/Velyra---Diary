@@ -1,0 +1,338 @@
+/* ============================================================
+   Command Bar Styles
+   Elegant command palette in the magical diary aesthetic
+   ============================================================ */
+
+/* ─── Trigger Button ─────────────────────────────────────────── */
+.command-bar-trigger {
+  position: fixed;
+  bottom: 1.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.9rem;
+  background: rgba(26, 15, 10, 0.75);
+  border: 1px solid rgba(184, 148, 64, 0.15);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(10px);
+  animation: cmdTriggerFadeIn 0.5s ease 0.3s both;
+}
+
+.command-bar-trigger:hover {
+  background: rgba(26, 15, 10, 0.9);
+  border-color: rgba(184, 148, 64, 0.35);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(184, 148, 64, 0.08);
+  transform: translateX(-50%) translateY(-1px);
+}
+
+.command-bar-trigger:active {
+  transform: translateX(-50%) translateY(0);
+}
+
+@keyframes cmdTriggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.command-bar-trigger__icon {
+  font-size: 0.8rem;
+  color: rgba(197, 147, 58, 0.7);
+  line-height: 1;
+}
+
+.command-bar-trigger__shortcut {
+  font-size: 0.62rem;
+  font-family: var(--font-ui);
+  color: rgba(232, 220, 200, 0.35);
+  letter-spacing: 0.04em;
+}
+
+/* ─── Command Bar Overlay ────────────────────────────────────── */
+.command-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 500;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  animation: cmdBarFadeIn 0.15s ease both;
+}
+
+.command-bar__backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 3, 2, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+@keyframes cmdBarFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ─── Container ──────────────────────────────────────────────── */
+.command-bar__container {
+  position: relative;
+  width: 92%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(170deg, #1c1310 0%, #151009 100%);
+  border: 1px solid rgba(184, 148, 64, 0.2);
+  border-radius: 14px;
+  box-shadow:
+    0 30px 100px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(184, 148, 64, 0.08);
+  overflow: hidden;
+  animation: cmdContainerSlide 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: opacity 0.2s ease;
+}
+
+.command-bar__container--fading {
+  opacity: 0;
+  transform: translateY(-6px) scale(0.98);
+}
+
+@keyframes cmdContainerSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─── Input Row ──────────────────────────────────────────────── */
+.command-bar__input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(184, 148, 64, 0.1);
+}
+
+.command-bar__prompt {
+  font-size: 0.9rem;
+  color: rgba(197, 147, 58, 0.6);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.command-bar__input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #ede2cc;
+  font-size: 0.9rem;
+  font-family: var(--font-ui);
+  outline: none;
+  caret-color: var(--accent-gold);
+}
+
+.command-bar__input::placeholder {
+  color: rgba(232, 220, 200, 0.28);
+  font-style: italic;
+}
+
+.command-bar__kbd {
+  padding: 1px 6px;
+  font-size: 0.58rem;
+  font-family: var(--font-ui);
+  color: rgba(232, 220, 200, 0.3);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(184, 148, 64, 0.12);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ─── Result Message ─────────────────────────────────────────── */
+.command-bar__result {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.78rem;
+  font-family: var(--font-ui);
+  animation: cmdResultFadeIn 0.2s ease both;
+}
+
+@keyframes cmdResultFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.command-bar__result--success {
+  color: #7dcea0;
+  background: rgba(58, 154, 90, 0.08);
+}
+
+.command-bar__result--error {
+  color: #e07c72;
+  background: rgba(180, 50, 40, 0.08);
+}
+
+.command-bar__result-icon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+/* ─── Suggestions List ───────────────────────────────────────── */
+.command-bar__suggestions {
+  padding: 0.3rem;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.command-bar__suggestions::-webkit-scrollbar {
+  width: 3px;
+}
+
+.command-bar__suggestions::-webkit-scrollbar-thumb {
+  background: rgba(184, 148, 64, 0.15);
+  border-radius: 2px;
+}
+
+/* ─── Single Suggestion ──────────────────────────────────────── */
+.command-bar__suggestion {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  color: #e8dcc8;
+}
+
+.command-bar__suggestion:hover,
+.command-bar__suggestion--active {
+  background: rgba(184, 148, 64, 0.08);
+}
+
+.command-bar__suggestion--active {
+  background: rgba(184, 148, 64, 0.12);
+}
+
+.command-bar__suggestion-icon {
+  font-size: 0.9rem;
+  width: 1.4rem;
+  text-align: center;
+  color: rgba(197, 147, 58, 0.6);
+  flex-shrink: 0;
+}
+
+.command-bar__suggestion-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.command-bar__suggestion-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  color: #e8dcc8;
+}
+
+.command-bar__suggestion-desc {
+  font-size: 0.65rem;
+  color: rgba(232, 220, 200, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.command-bar__suggestion-cmd {
+  font-size: 0.6rem;
+  font-family: 'Consolas', 'Menlo', monospace;
+  color: rgba(197, 147, 58, 0.35);
+  background: rgba(197, 147, 58, 0.06);
+  padding: 2px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ─── Empty State ────────────────────────────────────────────── */
+.command-bar__empty {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.72rem;
+  color: rgba(232, 220, 200, 0.35);
+  font-style: italic;
+}
+
+.command-bar__empty kbd {
+  padding: 1px 5px;
+  font-size: 0.6rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(184, 148, 64, 0.12);
+  border-radius: 3px;
+  font-family: var(--font-ui);
+  font-style: normal;
+}
+
+/* ─── Footer Hints ───────────────────────────────────────────── */
+.command-bar__footer {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 0.45rem 1rem;
+  border-top: 1px solid rgba(184, 148, 64, 0.08);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.command-bar__footer span {
+  font-size: 0.58rem;
+  color: rgba(232, 220, 200, 0.25);
+  font-family: var(--font-ui);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.command-bar__footer kbd {
+  padding: 1px 4px;
+  font-size: 0.54rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(184, 148, 64, 0.1);
+  border-radius: 2px;
+  font-family: var(--font-ui);
+  color: rgba(232, 220, 200, 0.35);
+}

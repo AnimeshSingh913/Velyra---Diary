@@ -1,0 +1,833 @@
+/* ============================================================
+   Diary Editor — Focus Mode, Editor & Toolbar Styles
+   ============================================================ */
+
+/* ─── Focused Page Overlay ───────────────────────────────────── */
+.focused-page-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 300;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: focusPageFadeIn 0.35s ease both;
+}
+
+.focused-page-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 3, 2, 0.7);
+  backdrop-filter: blur(6px);
+}
+
+@keyframes focusPageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ─── Focused Page Card ──────────────────────────────────────── */
+.focused-page {
+  position: relative;
+  width: 90%;
+  max-width: 720px;
+  height: 88%;
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(
+    168deg,
+    #f7f0de 0%,
+    #f2e9d3 30%,
+    #efe4ca 70%,
+    #eadfc2 100%
+  );
+  border-radius: 4px;
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.5),
+    0 0 1px rgba(0, 0, 0, 0.3),
+    inset 0 0 50px rgba(80, 50, 20, 0.04);
+  animation: focusPageSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  overflow: hidden;
+}
+
+@keyframes focusPageSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─── Header Bar ─────────────────────────────────────────────── */
+.focused-page__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 1.2rem;
+  background: rgba(42, 24, 16, 0.06);
+  border-bottom: 1px solid rgba(160, 130, 80, 0.15);
+  flex-shrink: 0;
+}
+
+.focused-page__back {
+  background: none;
+  border: 1px solid rgba(160, 130, 80, 0.3);
+  color: #6a5040;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.75rem;
+  font-family: var(--font-ui);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.focused-page__back:hover {
+  background: rgba(160, 130, 80, 0.12);
+  border-color: rgba(160, 130, 80, 0.5);
+  color: #3a2820;
+}
+
+.focused-page__entry-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+}
+
+.focused-page__title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2a1810;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0.1rem 0.3rem;
+  margin: 0;
+  border-radius: 2px;
+  transition: background var(--transition-fast);
+}
+
+.focused-page__title:hover {
+  background: rgba(180, 148, 64, 0.1);
+}
+
+.focused-page__title-input {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2a1810;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(160, 130, 80, 0.4);
+  border-radius: 2px;
+  padding: 0.1rem 0.3rem;
+  outline: none;
+  flex: 1;
+  min-width: 0;
+}
+
+.focused-page__title-input:focus {
+  border-color: #b89440;
+  box-shadow: 0 0 0 2px rgba(184, 148, 64, 0.15);
+}
+
+.focused-page__date {
+  font-size: 0.72rem;
+  color: #8a7060;
+  font-style: italic;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ─── Editor Body Container ──────────────────────────────────── */
+.focused-page__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.focused-page__loading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  color: #8a7060;
+  font-size: 0.85rem;
+}
+
+.focused-page__error {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b43228;
+  font-size: 0.85rem;
+}
+
+/* ─── Diary Editor Container ─────────────────────────────────── */
+.diary-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.diary-editor-loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8a7060;
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* ─── Editor Area ────────────────────────────────────────────── */
+.diary-editor-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 2rem 2rem;
+}
+
+.diary-editor-area::-webkit-scrollbar {
+  width: 5px;
+}
+
+.diary-editor-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.diary-editor-area::-webkit-scrollbar-thumb {
+  background: rgba(160, 130, 90, 0.3);
+  border-radius: 3px;
+}
+
+/* ─── Tiptap Editor Content ──────────────────────────────────── */
+.diary-editor-content {
+  font-family: var(--font-serif);
+  color: #3a2820;
+  line-height: 1.8;
+  font-size: 0.92rem;
+  min-height: 200px;
+  outline: none;
+}
+
+.diary-editor-content:focus {
+  outline: none;
+}
+
+/* Placeholder */
+.diary-editor-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #b0a090;
+  font-style: italic;
+  pointer-events: none;
+  height: 0;
+}
+
+/* Headings */
+.diary-editor-content h1 {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #2a1810;
+  margin: 1.2rem 0 0.6rem;
+  line-height: 1.3;
+}
+
+.diary-editor-content h2 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2a1810;
+  margin: 1rem 0 0.5rem;
+  line-height: 1.35;
+}
+
+.diary-editor-content h3 {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #3a2820;
+  margin: 0.8rem 0 0.4rem;
+  line-height: 1.4;
+}
+
+/* Paragraphs */
+.diary-editor-content p {
+  margin: 0 0 0.6rem;
+}
+
+/* Blockquote */
+.diary-editor-content blockquote {
+  border-left: 3px solid #b89440;
+  padding-left: 1rem;
+  margin: 0.8rem 0;
+  font-style: italic;
+  color: #5a4030;
+}
+
+/* Lists */
+.diary-editor-content ul,
+.diary-editor-content ol {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.diary-editor-content li {
+  margin-bottom: 0.25rem;
+}
+
+.diary-editor-content li p {
+  margin: 0;
+}
+
+/* Task list (checklist) */
+.diary-editor-content ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.diary-editor-content ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.diary-editor-content ul[data-type="taskList"] li > label {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.diary-editor-content ul[data-type="taskList"] li > label input[type="checkbox"] {
+  accent-color: #b89440;
+  cursor: pointer;
+}
+
+.diary-editor-content ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+
+.diary-editor-content ul[data-type="taskList"] li[data-checked="true"] > div {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+/* Horizontal rule */
+.diary-editor-content hr {
+  border: none;
+  border-top: 1px solid rgba(160, 130, 80, 0.3);
+  margin: 1.2rem 0;
+}
+
+/* Bold / Italic / Underline / Strike */
+.diary-editor-content strong {
+  font-weight: 700;
+}
+
+.diary-editor-content em {
+  font-style: italic;
+}
+
+.diary-editor-content u {
+  text-decoration: underline;
+}
+
+.diary-editor-content s {
+  text-decoration: line-through;
+}
+
+/* Highlight */
+.diary-editor-content mark {
+  border-radius: 2px;
+  padding: 0.05em 0.15em;
+}
+
+/* Inline Images & Videos */
+.diary-editor-content img,
+.diary-editor-content video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 1rem 0;
+  display: block;
+}
+
+.diary-editor-content img.ProseMirror-selectednode,
+.diary-editor-content video.ProseMirror-selectednode {
+  outline: 2px solid #b89440;
+}
+
+/* ─── Editor Toolbar ─────────────────────────────────────────── */
+.editor-toolbar {
+  flex-shrink: 0;
+  background: rgba(42, 24, 16, 0.05);
+  border-bottom: 1px solid rgba(160, 130, 80, 0.15);
+  padding: 0.25rem 0.5rem;
+  user-select: none;
+}
+
+.editor-toolbar__row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 0;
+  flex-wrap: wrap;
+}
+
+/* ─── Toolbar Groups ─────────────────────────────────────────── */
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.toolbar-group--dropdown {
+  position: relative;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(160, 130, 80, 0.2);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* ─── Toolbar Buttons ────────────────────────────────────────── */
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  color: #5a4030;
+  font-size: 0.72rem;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 100ms ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+  background: rgba(180, 148, 64, 0.15);
+  color: #2a1810;
+}
+
+.toolbar-btn--active {
+  background: rgba(180, 148, 64, 0.22) !important;
+  color: #7a5020 !important;
+  box-shadow: inset 0 0 0 1px rgba(184, 148, 64, 0.3);
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Specific text styling */
+.toolbar-btn--bold { font-weight: 800; }
+.toolbar-btn--italic { font-style: italic; }
+.toolbar-btn--underline { text-decoration: underline; }
+.toolbar-btn--strike { text-decoration: line-through; }
+
+/* ─── Color Buttons ──────────────────────────────────────────── */
+.toolbar-btn--color,
+.toolbar-btn--highlight {
+  position: relative;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.color-indicator {
+  display: block;
+  width: 16px;
+  height: 3px;
+  border-radius: 1px;
+}
+
+/* ─── Dropdown Button ────────────────────────────────────────── */
+.toolbar-dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  background: transparent;
+  border: none;
+  color: #5a4030;
+  font-size: 0.7rem;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 100ms ease;
+  height: 26px;
+}
+
+.toolbar-dropdown-btn:hover {
+  background: rgba(180, 148, 64, 0.15);
+  color: #2a1810;
+}
+
+.toolbar-dropdown-label {
+  font-size: 0.68rem;
+}
+
+.toolbar-dropdown-arrow {
+  font-size: 0.6rem;
+  opacity: 0.6;
+}
+
+/* ─── Dropdown Menu ──────────────────────────────────────────── */
+.toolbar-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 50;
+  background: #f5ecd7;
+  border: 1px solid rgba(160, 130, 80, 0.3);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  min-width: 120px;
+  padding: 4px;
+  animation: dropdownFadeIn 0.15s ease both;
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.toolbar-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 5px 10px;
+  background: none;
+  border: none;
+  text-align: left;
+  color: #3a2820;
+  font-size: 0.78rem;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 100ms ease;
+}
+
+.toolbar-dropdown-item:hover {
+  background: rgba(180, 148, 64, 0.15);
+}
+
+.toolbar-dropdown-item--clear {
+  color: #8a7060;
+  font-style: italic;
+  border-top: 1px solid rgba(160, 130, 80, 0.15);
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+/* ─── Color Grid ─────────────────────────────────────────────── */
+.toolbar-color-grid {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  background: #f5ecd7;
+  border: 1px solid rgba(160, 130, 80, 0.3);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 6px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+  animation: dropdownFadeIn 0.15s ease both;
+}
+
+.toolbar-color-swatch {
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: transform 100ms ease, box-shadow 100ms ease;
+  padding: 0;
+}
+
+.toolbar-color-swatch:hover {
+  transform: scale(1.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.toolbar-color-swatch--clear {
+  background: #fff !important;
+  position: relative;
+}
+
+.toolbar-color-swatch--clear::after {
+  content: '✕';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.6rem;
+  color: #b43228;
+}
+
+/* ─── Save Status ────────────────────────────────────────────── */
+.diary-editor-status {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 1rem;
+  font-size: 0.68rem;
+  font-family: var(--font-ui);
+  color: #8a7060;
+  border-top: 1px solid rgba(160, 130, 80, 0.1);
+  min-height: 24px;
+  transition: opacity var(--transition-fast);
+}
+
+.diary-editor-status--idle {
+  opacity: 0;
+}
+
+.diary-editor-status--saving {
+  opacity: 1;
+  color: #8a7060;
+}
+
+.diary-editor-status--saved {
+  opacity: 1;
+  color: #3a9a5a;
+}
+
+.diary-editor-status--error {
+  opacity: 1;
+  color: #b43228;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-dot--saving {
+  background: #b89440;
+  animation: statusPulse 1s ease-in-out infinite;
+}
+
+.status-dot--saved {
+  background: #3a9a5a;
+}
+
+.status-dot--error {
+  background: #b43228;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ─── Entry page clickable state ─────────────────────────────── */
+.page-panel--clickable {
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.page-panel--clickable:hover {
+  box-shadow:
+    0 0 0 2px rgba(184, 148, 64, 0.25),
+    0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.page-panel--clickable:active {
+  transform: scale(0.995);
+}
+
+/* ─── Media Gallery ──────────────────────────────────────────── */
+.media-gallery {
+  flex-shrink: 0;
+  border-top: 1px solid rgba(160, 130, 80, 0.15);
+  background: rgba(42, 24, 16, 0.03);
+}
+
+.media-gallery__actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 1.2rem;
+}
+
+.media-import-btn {
+  background: none;
+  border: 1px dashed rgba(160, 120, 50, 0.35);
+  color: #7a5a30;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.72rem;
+  font-family: var(--font-ui);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.media-import-btn:hover {
+  border-color: rgba(160, 120, 50, 0.6);
+  background: rgba(180, 148, 64, 0.08);
+  color: #5a3a10;
+}
+
+/* ─── Media Items Container ──────────────────────────────────── */
+.media-gallery__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  padding: 0 1.2rem 0.8rem;
+}
+
+/* ─── Individual Media Item ──────────────────────────────────── */
+.media-item {
+  position: relative;
+  border-radius: 4px;
+  overflow: visible;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+  max-width: 100%;
+}
+
+.media-item:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+}
+
+.media-item__image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 3px;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+.media-item__video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 3px;
+  background: #1a0f0a;
+}
+
+.media-item__placeholder {
+  width: 100%;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(42, 24, 16, 0.06);
+  border-radius: 3px;
+  color: #8a7060;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* ─── Selection State ────────────────────────────────────────── */
+.media-item--selected {
+  z-index: 5;
+}
+
+.media-item__bbox {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid rgba(184, 148, 64, 0.7);
+  border-radius: 5px;
+  pointer-events: none;
+  box-shadow: 0 0 0 1px rgba(184, 148, 64, 0.15);
+}
+
+.media-item__delete {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(180, 50, 40, 0.9);
+  color: #fff;
+  border: 2px solid #f5ecd7;
+  font-size: 0.6rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 100ms ease;
+  z-index: 10;
+  padding: 0;
+  line-height: 1;
+}
+
+.media-item__delete:hover {
+  background: rgba(200, 40, 30, 1);
+  transform: scale(1.15);
+}
+
+.media-item__resize-handle {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  width: 14px;
+  height: 14px;
+  background: rgba(184, 148, 64, 0.9);
+  border: 2px solid #f5ecd7;
+  border-radius: 2px;
+  cursor: se-resize;
+  z-index: 10;
+  transition: background 100ms ease;
+}
+
+.media-item__resize-handle:hover {
+  background: rgba(197, 147, 58, 1);
+}
+
+.media-item__name {
+  position: absolute;
+  bottom: -22px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.62rem;
+  color: #8a7060;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
