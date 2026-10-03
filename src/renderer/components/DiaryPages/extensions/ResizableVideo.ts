@@ -23,10 +23,26 @@ export const ResizableVideo = Node.create<ResizableVideoOptions>({
   addAttributes() {
     return {
       src: { default: null },
-      width: { default: '100%' },
-      align: { default: 'center' }, // 'left', 'center', 'right'
-      wrap: { default: 'none' }, // 'none', 'wrap'
-      mediaId: { default: null },
+      width: { 
+        default: '50%',
+        parseHTML: element => element.getAttribute('data-width') || element.getAttribute('width') || '50%',
+        renderHTML: attributes => ({ 'data-width': attributes.width, width: attributes.width }),
+      },
+      align: { 
+        default: 'center',
+        parseHTML: element => element.getAttribute('data-align') || 'center',
+        renderHTML: attributes => ({ 'data-align': attributes.align }),
+      },
+      wrap: { 
+        default: 'none',
+        parseHTML: element => element.getAttribute('data-wrap') || 'none',
+        renderHTML: attributes => ({ 'data-wrap': attributes.wrap }),
+      },
+      mediaId: { 
+        default: null,
+        parseHTML: element => element.getAttribute('data-media-id') || element.getAttribute('mediaId') || null,
+        renderHTML: attributes => ({ 'data-media-id': attributes.mediaId, mediaId: attributes.mediaId }),
+      },
     }
   },
 

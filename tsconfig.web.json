@@ -12,7 +12,6 @@
     "declaration": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "composite": true,
     "types": ["vite/client"]
   },
   "include": [

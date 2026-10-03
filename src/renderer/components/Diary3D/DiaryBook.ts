@@ -87,12 +87,12 @@ export class DiaryBook {
       shape.quadraticCurveTo(0, 0, 0, r)
       
       const geo = new THREE.ExtrudeGeometry(shape, {
-        depth: COVER_T - 0.01,
+        depth: COVER_T + 0.01, // Slightly thicker cover
         bevelEnabled: true,
-        bevelSegments: 4,
+        bevelSegments: 8, // Smoother rounded bevel
         steps: 1,
-        bevelSize: 0.025,
-        bevelThickness: 0.025,
+        bevelSize: 0.035, // Larger bevel to catch edge highlights
+        bevelThickness: 0.035,
       })
       geo.center()
       geo.rotateX(Math.PI / 2)

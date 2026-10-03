@@ -51,18 +51,19 @@ function createPageEdgeTexture(): THREE.CanvasTexture {
 
   const imageData = ctx.createImageData(size, size)
   for (let y = 0; y < size; y++) {
-    // Generate horizontal striations for individual pages
-    const pageLine = Math.sin(y * 120) * 20
-    const pageGap = (y % 4 === 0) ? -15 : 0 // Darker gaps between some pages
+    // Generate sharp horizontal striations for individual pages
+    const pageLine = (Math.sin(y * 80) + Math.cos(y * 240)) * 12
+    const pageGap = (y % 6 === 0 || y % 7 === 0) ? -25 : 0 // Darker gaps between sections
+    const tonalVar = Math.sin(y * 5) * 10 // Large tonal bands
     
     for (let x = 0; x < size; x++) {
       const i = (y * size + x) * 4
-      const mottle = (Math.random() - 0.5) * 10
-      const val = 200 + pageLine + pageGap + mottle
+      const mottle = (Math.random() - 0.5) * 15 // Paper noise
+      const val = Math.min(255, Math.max(0, 195 + pageLine + pageGap + tonalVar + mottle))
       
       imageData.data[i] = val       // R
-      imageData.data[i + 1] = val * 0.95 // G (slight yellow tint)
-      imageData.data[i + 2] = val * 0.8  // B
+      imageData.data[i + 1] = val * 0.92 // G (yellow/warm tint)
+      imageData.data[i + 2] = val * 0.75 // B (aged)
       imageData.data[i + 3] = 255
     }
   }
@@ -112,51 +113,67 @@ export function createBookMaterials() {
   const paperBump = createPaperBumpMap()
   const pageEdgeTex = createPageEdgeTexture()
 
-  const cover = new THREE.MeshStandardMaterial({
-    color: 0x4a0e16, // Brighter, rich dark burgundy
-    roughness: 0.65, // Lower roughness so it catches clear specular highlights
-    metalness: 0.15, // Better specular response for polished leather
+  const cover = new THREE.MeshPhysicalMaterial({
+    color: 0x5a1118, // Rich dark burgundy
+    roughness: 0.65, 
+    metalness: 0.05, 
+    clearcoat: 0.15,
+    clearcoatRoughness: 0.7,
     bumpMap: leatherBump,
-    bumpScale: 0.015, // Increased to make grain visibly catch light
+    bumpScale: 0.04, 
+    envMapIntensity: 0.8,
   })
 
-  const spine = new THREE.MeshStandardMaterial({
+  const spine = new THREE.MeshPhysicalMaterial({
     color: 0x3a0a10, // Slightly darker than cover
-    roughness: 0.75,
-    metalness: 0.12,
+    roughness: 0.7,
+    metalness: 0.05,
+    clearcoat: 0.1,
+    clearcoatRoughness: 0.75,
     bumpMap: leatherBump,
-    bumpScale: 0.015,
+    bumpScale: 0.025,
+    envMapIntensity: 0.8,
   })
 
-  const gold = new THREE.MeshStandardMaterial({
-    color: 0xffd470, // Brighter, clearer antique gold
-    roughness: 0.25, // More reflective
-    metalness: 0.95, // Higher metalness for realistic brass/gold
+  const gold = new THREE.MeshPhysicalMaterial({
+    color: 0xcca652, // Warm antique brass/gold base
+    roughness: 0.25,
+    metalness: 0.95,
+    clearcoat: 0.3,
+    clearcoatRoughness: 0.4,
+    emissive: new THREE.Color(0x110d02), // Very subtle warm floor
+    emissiveIntensity: 0.5,
     bumpMap: leatherBump, 
-    bumpScale: 0.008, // Subtle embossed texture on the metal
+    bumpScale: 0.015,
+    envMapIntensity: 1.2,
   })
 
   const page = new THREE.MeshStandardMaterial({
-    color: 0xfff4de, // Slightly brighter warm parchment
+    color: 0xf5e3c8, // Aged warm parchment
     roughness: 0.95,
     metalness: 0.0,
     bumpMap: paperBump,
-    bumpScale: 0.003,
+    bumpScale: 0.005,
+    envMapIntensity: 0.2,
   })
 
   const pageEdge = new THREE.MeshStandardMaterial({
     color: 0xdfd3b8, // Base edge color
     map: pageEdgeTex, // Layered page lines
-    roughness: 0.9,
+    roughness: 0.85,
     metalness: 0.0,
     bumpMap: pageEdgeTex,
-    bumpScale: 0.005,
+    bumpScale: 0.015, // stronger bump for page layers
+    envMapIntensity: 0.2,
   })
 
-  const clasp = new THREE.MeshStandardMaterial({
-    color: 0xa88540, // Brighter bronze
-    roughness: 0.4,
+  const clasp = new THREE.MeshPhysicalMaterial({
+    color: 0xa88540,
+    roughness: 0.3,
     metalness: 0.9,
+    clearcoat: 0.2,
+    clearcoatRoughness: 0.3,
+    envMapIntensity: 1.2,
   })
 
   return { cover, spine, gold, page, pageEdge, clasp }

@@ -2,7 +2,8 @@ import * as THREE from 'three'
 
 /**
  * Creates all gold decorative ornaments for the front cover.
- * Original design: celestial/arcane motif — no copyrighted artwork.
+ * HIGH VISIBILITY REFINEMENT: Thick, raised, highly physical antique brass.
+ * Substantial filigree and fully integrated elegant design.
  */
 export function createCoverOrnaments(
   goldMaterial: THREE.MeshStandardMaterial,
@@ -10,293 +11,433 @@ export function createCoverOrnaments(
   coverH: number
 ): THREE.Group {
   const group = new THREE.Group()
-  const ornamentDepth = 0.02 // Thicker for realism
+  const depth = 0.055 // HIGHER RAISED physical embossing depth
 
-  // ─── Border Frame ──────────────────────────────────────────
-  const inset = 0.18
-  const bw = coverW - inset * 2
-  const bh = coverH - inset * 2
-  const barThick = 0.025
+  // Create an extremely faint glowing gold for the magic highlights
+  const glowGold = goldMaterial.clone()
+  glowGold.emissive = new THREE.Color(0xff8833)
+  glowGold.emissiveIntensity = 0.05 // Barely there warm highlight
 
-  // Horizontal bars (top, bottom)
-  for (const zSign of [1, -1]) {
-    const bar = new THREE.Mesh(
-      new THREE.BoxGeometry(bw, ornamentDepth, barThick),
-      goldMaterial
-    )
-    bar.position.set(0, 0, zSign * (bh / 2))
-    group.add(bar)
-  }
-  // Vertical bars (left, right)
-  for (const xSign of [1, -1]) {
-    const bar = new THREE.Mesh(
-      new THREE.BoxGeometry(barThick, ornamentDepth, bh),
-      goldMaterial
-    )
-    bar.position.set(xSign * (bw / 2), 0, 0)
-    group.add(bar)
-  }
+  // 1. SUBSTANTIAL ORNAMENTAL FRAME (Double Border + Rich Filigree)
+  const frameGroup = createSubstantialFrame(goldMaterial, coverW, coverH, depth)
+  group.add(frameGroup)
 
-  // ─── Inner Border Frame ────────────────────────────────────
-  const innerInset = 0.35
-  const ibw = coverW - innerInset * 2
-  const ibh = coverH - innerInset * 2
-  const innerBarThick = 0.01
+  // 2. CORNER FILIGREE CLUSTERS (Large, highly visible, elegant)
+  const cornersGroup = createCornerFiligree(goldMaterial, glowGold, coverW, coverH, depth)
+  group.add(cornersGroup)
 
-  // Horizontal inner bars
-  for (const zSign of [1, -1]) {
-    const bar = new THREE.Mesh(
-      new THREE.BoxGeometry(ibw, ornamentDepth * 0.5, innerBarThick),
-      goldMaterial
-    )
-    bar.position.set(0, 0, zSign * (ibh / 2))
-    group.add(bar)
-  }
-  // Vertical inner bars
-  for (const xSign of [1, -1]) {
-    const bar = new THREE.Mesh(
-      new THREE.BoxGeometry(innerBarThick, ornamentDepth * 0.5, ibh),
-      goldMaterial
-    )
-    bar.position.set(xSign * (ibw / 2), 0, 0)
-    group.add(bar)
-  }
-
-  // ─── Corner Ornaments ─────────────────────────────────────
-  const corners: [number, number, number][] = [
-    [-bw / 2, 0, bh / 2],
-    [bw / 2, 0, bh / 2],
-    [-bw / 2, 0, -bh / 2],
-    [bw / 2, 0, -bh / 2],
-  ]
-  const cornerRotations = [0, Math.PI / 2, -Math.PI / 2, Math.PI]
-
-  corners.forEach(([cx, cy, cz], idx) => {
-    const corner = createCornerPiece(goldMaterial, ornamentDepth)
-    corner.position.set(cx, cy, cz)
-    corner.rotation.y = cornerRotations[idx]
-    group.add(corner)
-  })
-
-  // ─── Central Emblem ────────────────────────────────────────
-  const emblem = createCentralEmblem(goldMaterial, ornamentDepth)
+  // 3. CENTRAL EMBLEM (Layered, thick bevels, no extreme glow)
+  const emblem = createCentralEmblem(goldMaterial, glowGold, depth)
   group.add(emblem)
 
-  // ─── Decorative line from emblem to top/bottom ─────────────
-  for (const zDir of [1, -1]) {
-    const lineLen = bh * 0.18
-    const line = new THREE.Mesh(
-      new THREE.BoxGeometry(0.015, ornamentDepth, lineLen),
-      goldMaterial
-    )
-    line.position.set(0, 0, zDir * (0.45 + lineLen / 2))
-    group.add(line)
+  // 4. VERTICAL CENTER MOTIF
+  const verticalMotif = createVerticalMotif(goldMaterial, glowGold, coverW, coverH, depth)
+  group.add(verticalMotif)
 
-    // Small diamond at end
-    const diamond = createDiamond(goldMaterial, 0.04, ornamentDepth)
-    diamond.position.set(0, 0, zDir * (0.45 + lineLen + 0.05))
-    group.add(diamond)
-  }
+  // 5. INTENTIONAL CELESTIAL DETAILS
+  const celestial = createIntentionalCelestial(goldMaterial, glowGold, coverW, coverH, depth)
+  group.add(celestial)
 
-  // ─── Star Accents ─────────────────────────────────────────
-  const starPositions: [number, number][] = [
-    [bw * 0.32, bh * 0.35],
-    [-bw * 0.32, bh * 0.35],
-    [bw * 0.32, -bh * 0.35],
-    [-bw * 0.32, -bh * 0.35],
-    [bw * 0.15, bh * 0.42],
-    [-bw * 0.15, bh * 0.42],
-    [bw * 0.15, -bh * 0.42],
-    [-bw * 0.15, -bh * 0.42],
-    [0, bh * 0.45],
-    [0, -bh * 0.45],
-  ]
-
-  starPositions.forEach(([sx, sz]) => {
-    const size = 0.02 + Math.random() * 0.02
-    const star = createFourPointStar(goldMaterial, size, ornamentDepth)
-    star.position.set(sx, 0, sz)
-    star.rotation.y = Math.random() * Math.PI
-    group.add(star)
-  })
+  // 6. TINY MAGICAL LIGHTING (Barely there)
+  const pointLight = new THREE.PointLight(0xffa544, 0.05, 4.0)
+  pointLight.position.set(0, depth + 0.15, 0)
+  group.add(pointLight)
 
   // ─── Clasp on right edge ──────────────────────────────────
-  const claspGroup = createClasp(goldMaterial, ornamentDepth)
-  claspGroup.position.set(coverW / 2 - 0.02, 0, 0)
+  const claspGroup = createClasp(goldMaterial, depth)
+  claspGroup.position.set(coverW / 2 - 0.03, 0, 0)
   group.add(claspGroup)
 
   return group
 }
 
-// ─── Corner Piece ──────────────────────────────────────────────
+// ─── 1. SUBSTANTIAL FRAME ──────────────────────────────────────
 
-function createCornerPiece(
-  material: THREE.MeshStandardMaterial,
+function createSubstantialFrame(
+  mat: THREE.MeshStandardMaterial,
+  cw: number,
+  ch: number,
   depth: number
 ): THREE.Group {
   const g = new THREE.Group()
-  const armLen = 0.22
-  const armW = 0.04
-
-  // Horizontal arm
-  const hArm = new THREE.Mesh(
-    new THREE.BoxGeometry(armLen, depth, armW),
-    material
-  )
-  hArm.position.set(armLen / 2, 0, -armW / 2)
-  g.add(hArm)
-
-  // Vertical arm
-  const vArm = new THREE.Mesh(
-    new THREE.BoxGeometry(armW, depth, armLen),
-    material
-  )
-  vArm.position.set(armW / 2, 0, -armLen / 2)
-  g.add(vArm)
   
-  // Rivets on arms
-  const rivetGeo = new THREE.SphereGeometry(0.015, 8, 8, 0, Math.PI * 2, 0, Math.PI / 2)
-  const rivet1 = new THREE.Mesh(rivetGeo, material)
-  rivet1.position.set(armLen * 0.8, depth / 2, -armW / 2)
-  g.add(rivet1)
-  
-  const rivet2 = new THREE.Mesh(rivetGeo, material)
-  rivet2.position.set(armW / 2, depth / 2, -armLen * 0.8)
-  g.add(rivet2)
+  // Thick Outer Border
+  const outInset = 0.15
+  const ow = cw - outInset * 2
+  const oh = ch - outInset * 2
+  const outThick = 0.05 // Highly visible
 
-  // Decorative circle at the joint
-  const circle = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.035, 0.035, depth * 1.5, 16),
-    material
-  )
-  circle.position.set(0.02, 0, -0.02)
-  g.add(circle)
+  // Thin Inner Border
+  const inInset = 0.35
+  const iw = cw - inInset * 2
+  const ih = ch - inInset * 2
+  const inThick = 0.02 
 
-  // Small scroll curve (using a torus segment)
-  const scrollRadius = 0.06
-  const scroll = new THREE.Mesh(
-    new THREE.TorusGeometry(scrollRadius, 0.008, 8, 12, Math.PI * 0.7),
-    material
-  )
-  scroll.rotation.x = -Math.PI / 2
-  scroll.position.set(armLen * 0.6, 0, -0.02)
-  g.add(scroll)
+  const buildRect = (w: number, h: number, t: number, d: number) => {
+    const rg = new THREE.Group()
+    const horizGeo = new THREE.BoxGeometry(w, d, t)
+    const vertGeo = new THREE.BoxGeometry(t, d, h)
+    
+    // Add bevel-like smoothing by keeping geometry clean, material catches light well
+    const top = new THREE.Mesh(horizGeo, mat)
+    top.position.set(0, d / 2, h / 2)
+    const bot = new THREE.Mesh(horizGeo, mat)
+    bot.position.set(0, d / 2, -h / 2)
+    const left = new THREE.Mesh(vertGeo, mat)
+    left.position.set(-w / 2, d / 2, 0)
+    const right = new THREE.Mesh(vertGeo, mat)
+    right.position.set(w / 2, d / 2, 0)
+    
+    rg.add(top, bot, left, right)
+    return rg
+  }
 
-  const scroll2 = new THREE.Mesh(
-    new THREE.TorusGeometry(scrollRadius, 0.008, 8, 12, Math.PI * 0.7),
-    material
-  )
-  scroll2.rotation.x = -Math.PI / 2
-  scroll2.rotation.z = Math.PI / 2
-  scroll2.position.set(0.02, 0, -armLen * 0.6)
-  g.add(scroll2)
+  g.add(buildRect(ow, oh, outThick, depth))
+  g.add(buildRect(iw, ih, inThick, depth * 0.7))
+
+  // Mid-border scrolling filigree lines running along the edges
+  const numScrolls = 7
+  const sideH = (oh / 2) - 0.5
+  for (const zSign of [1, -1]) {
+    for (const xSign of [1, -1]) {
+      for (let i = 1; i < numScrolls; i++) {
+        const offset = (sideH * (i / numScrolls)) * zSign
+        const arc = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.015, 12, 32, Math.PI), mat)
+        arc.rotation.x = -Math.PI / 2
+        arc.rotation.z = Math.PI / 2
+        
+        // Alternating flips for a running vine look
+        if (i % 2 !== 0) arc.rotation.z = -Math.PI / 2
+        
+        arc.position.set(xSign * (ow / 2 - 0.1), depth * 0.8, offset)
+        g.add(arc)
+      }
+    }
+  }
+
+  // Top/bottom edge scrolls
+  const numTopScrolls = 4
+  const sideW = (ow / 2) - 0.5
+  for (const zSign of [1, -1]) {
+    for (const xSign of [1, -1]) {
+      for (let i = 1; i < numTopScrolls; i++) {
+        const offset = (sideW * (i / numTopScrolls)) * xSign
+        const arc = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.015, 12, 32, Math.PI), mat)
+        arc.rotation.x = -Math.PI / 2
+        
+        if (i % 2 !== 0) arc.rotation.z = Math.PI
+        
+        arc.position.set(offset, depth * 0.8, zSign * (oh / 2 - 0.1))
+        g.add(arc)
+      }
+    }
+  }
 
   return g
 }
 
-// ─── Central Emblem ────────────────────────────────────────────
+// ─── 2. CORNER FILIGREE ────────────────────────────────────────
+
+function createCornerFiligree(
+  mat: THREE.MeshStandardMaterial,
+  glowMat: THREE.MeshStandardMaterial,
+  cw: number,
+  ch: number,
+  depth: number
+): THREE.Group {
+  const g = new THREE.Group()
+  const inset = 0.15
+  const ow = cw - inset * 2
+  const oh = ch - inset * 2
+
+  const corners: [number, number, number][] = [
+    [-ow / 2, 0, oh / 2],
+    [ow / 2, 0, oh / 2],
+    [-ow / 2, 0, -oh / 2],
+    [ow / 2, 0, -oh / 2],
+  ]
+  const rotations = [0, Math.PI / 2, -Math.PI / 2, Math.PI]
+
+  corners.forEach(([cx, cy, cz], idx) => {
+    const corner = new THREE.Group()
+    
+    // Huge thick sweeping arc defining the corner boundary
+    const mainArc = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.025, 16, 48, Math.PI / 2), mat)
+    mainArc.rotation.x = -Math.PI / 2
+    mainArc.position.set(0, depth * 0.8, 0)
+    corner.add(mainArc)
+
+    // Secondary inner arc
+    const innerArc = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.018, 16, 48, Math.PI / 2), mat)
+    innerArc.rotation.x = -Math.PI / 2
+    innerArc.position.set(0.05, depth * 0.9, 0.05)
+    corner.add(innerArc)
+
+    // Inner curled vine
+    const curl = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.015, 16, 48, Math.PI * 1.5), mat)
+    curl.rotation.x = -Math.PI / 2
+    curl.rotation.z = Math.PI / 4
+    curl.position.set(0.15, depth * 1.0, 0.15)
+    corner.add(curl)
+
+    // Large leaf/diamond accents at the tips
+    const leaf = createDiamond(mat, 0.08, depth * 1.5)
+    leaf.position.set(0.22, 0, 0.22)
+    leaf.rotation.y = Math.PI / 4
+    corner.add(leaf)
+
+    // Tiny glowing highlight pearl
+    const pearl = new THREE.Mesh(new THREE.SphereGeometry(0.03, 16, 16), glowMat)
+    pearl.scale.y = 0.5
+    pearl.position.set(0.12, depth * 1.2, 0.12)
+    corner.add(pearl)
+
+    corner.position.set(cx, cy, cz)
+    corner.rotation.y = rotations[idx]
+    g.add(corner)
+  })
+
+  return g
+}
+
+// ─── 3. CENTRAL EMBLEM ─────────────────────────────────────────
 
 function createCentralEmblem(
-  material: THREE.MeshStandardMaterial,
+  mat: THREE.MeshStandardMaterial,
+  glowMat: THREE.MeshStandardMaterial,
   depth: number
 ): THREE.Group {
   const g = new THREE.Group()
 
-  // Central large diamond
+  // Base plates with extreme thick bevels for physical light catching
   const diamondShape = new THREE.Shape()
-  const dw = 0.25, dh = 0.45
+  const dw = 0.45, dh = 0.75
   diamondShape.moveTo(0, dh)
   diamondShape.lineTo(dw, 0)
   diamondShape.lineTo(0, -dh)
   diamondShape.lineTo(-dw, 0)
   diamondShape.closePath()
 
-  // Inner cutout for the diamond
-  const innerHole = new THREE.Path()
-  const idw = 0.18, idh = 0.35
-  innerHole.moveTo(0, idh)
-  innerHole.lineTo(idw, 0)
-  innerHole.lineTo(0, -idh)
-  innerHole.lineTo(-idw, 0)
-  innerHole.closePath()
-  diamondShape.holes.push(innerHole)
-
   const diamondGeo = new THREE.ExtrudeGeometry(diamondShape, {
-    depth: depth * 1.5,
+    depth: depth * 1.3,
     bevelEnabled: true,
-    bevelSegments: 2,
-    steps: 1,
-    bevelSize: 0.01,
-    bevelThickness: 0.01,
+    bevelSize: 0.035, // Enhanced bevel for strong highlights
+    bevelThickness: 0.035
   })
-  const diamond = new THREE.Mesh(diamondGeo, material)
+  const diamond = new THREE.Mesh(diamondGeo, mat)
   diamond.rotation.x = -Math.PI / 2
-  diamond.position.y = depth * 0.75
+  diamond.position.y = depth * 0.2 // Visually separate from background
   g.add(diamond)
-  
-  // Solid Base plate behind diamond to give physical depth
-  const baseShape = new THREE.Shape()
-  baseShape.moveTo(0, dh + 0.05)
-  baseShape.lineTo(dw + 0.05, 0)
-  baseShape.lineTo(0, -dh - 0.05)
-  baseShape.lineTo(-dw - 0.05, 0)
-  baseShape.closePath()
-  const baseGeo = new THREE.ExtrudeGeometry(baseShape, {
-    depth: depth * 0.5,
+
+  // Complex layered celestial seal
+  const compassGeo = new THREE.ExtrudeGeometry(createStarShape(4, 0.38, 0.1), {
+    depth: depth * 2.1,
     bevelEnabled: true,
-    bevelSize: 0.02,
+    bevelSize: 0.02, // Enhanced bevel
     bevelThickness: 0.02
   })
-  const basePlate = new THREE.Mesh(baseGeo, material)
-  basePlate.rotation.x = -Math.PI / 2
-  basePlate.position.y = 0
-  g.add(basePlate)
-
-  // Intersecting arcane ring
-  const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(0.28, 0.015, 12, 48),
-    material
-  )
-  ring.rotation.x = -Math.PI / 2
-  ring.position.y = depth * 1.2
-  g.add(ring)
-
-  // Central 8-pointed star inside the diamond
-  const starShape = createStarShape(8, 0.12, 0.04)
-  const starGeo = new THREE.ExtrudeGeometry(starShape, {
-    depth: depth * 2,
+  const compass = new THREE.Mesh(compassGeo, mat)
+  compass.rotation.x = -Math.PI / 2
+  compass.position.y = depth * 0.2
+  g.add(compass)
+  
+  // Secondary offset compass
+  const compassGeo2 = new THREE.ExtrudeGeometry(createStarShape(4, 0.28, 0.08), {
+    depth: depth * 2.3,
     bevelEnabled: true,
-    bevelSegments: 2,
-    steps: 1,
-    bevelSize: 0.003,
-    bevelThickness: 0.003,
+    bevelSize: 0.015,
+    bevelThickness: 0.015
   })
-  const star = new THREE.Mesh(starGeo, material)
-  star.rotation.x = -Math.PI / 2
-  star.position.y = depth * 0.5
-  g.add(star)
+  const compass2 = new THREE.Mesh(compassGeo2, mat)
+  compass2.rotation.x = -Math.PI / 2
+  compass2.rotation.y = Math.PI / 4
+  compass2.position.y = depth * 0.2
+  g.add(compass2)
 
-  // 4 small satellite stars on the ring
+  // Thick concentric inner rings
+  const innerRing1 = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.02, 16, 48), mat)
+  innerRing1.rotation.x = -Math.PI / 2
+  innerRing1.position.y = depth * 2.6
+  g.add(innerRing1)
+
+  // Subtle core (barely glowing)
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.08, 24, 24), glowMat)
+  core.scale.y = 0.4
+  core.position.y = depth * 2.8
+  g.add(core)
+
+  // ─── Surrounding Detail ───
+  const surrGroup = new THREE.Group()
+  
+  // Thick, substantial outer bounding oval
   for (let i = 0; i < 4; i++) {
-    const angle = (i * Math.PI) / 2 + Math.PI / 4
-    const r = 0.28
-    const satStar = createFourPointStar(material, 0.03, depth * 1.5)
-    satStar.position.set(Math.cos(angle) * r, depth * 0.8, Math.sin(angle) * r)
-    // Rotate to point outward
-    satStar.rotation.y = -angle
-    g.add(satStar)
+    const arc = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.018, 16, 48, Math.PI / 2.2), mat)
+    arc.rotation.x = -Math.PI / 2
+    arc.scale.set(0.85, 1, 1.25) // Oval stretch
+    arc.rotation.z = (i * Math.PI) / 2 + Math.PI / 12
+    arc.position.y = depth * 0.8
+    surrGroup.add(arc)
+  }
+
+  // Cardinal point huge diamonds on the outer oval
+  for (let i = 0; i < 4; i++) {
+    const angle = (i * Math.PI) / 2
+    const distX = 0.55, distZ = 0.8
+    const px = Math.cos(angle) * distX
+    const pz = Math.sin(angle) * distZ
+    
+    const gem = createDiamond(mat, 0.06, depth * 1.5)
+    gem.position.set(px, 0, pz)
+    gem.rotation.y = -angle
+    surrGroup.add(gem)
+  }
+
+  g.add(surrGroup)
+  return g
+}
+
+// ─── 4. VERTICAL CENTER MOTIF ──────────────────────────────────
+
+function createVerticalMotif(
+  mat: THREE.MeshStandardMaterial,
+  glowMat: THREE.MeshStandardMaterial,
+  cw: number,
+  ch: number,
+  depth: number
+): THREE.Group {
+  const g = new THREE.Group()
+  const outInset = 0.15
+  const ih = ch - outInset * 2
+
+  const gap = 0.95 // Accommodate the larger central emblem
+  const lineLen = (ih / 2) - gap
+
+  for (const zSign of [1, -1]) {
+    const cy = zSign * (gap + lineLen / 2)
+    
+    // Substantial structural vertical line
+    const line = new THREE.Mesh(
+      new THREE.BoxGeometry(0.02, depth * 0.8, lineLen),
+      mat
+    )
+    line.position.set(0, depth * 0.5, cy)
+    g.add(line)
+
+    // Large intermediate filigree knots
+    const numKnots = 3
+    for (let i = 1; i <= numKnots; i++) {
+      const sepZ = zSign * (gap + (lineLen * (i / (numKnots + 1))))
+      
+      const knot = new THREE.Group()
+      
+      const dia = createDiamond(mat, 0.04, depth * 1.5)
+      dia.position.set(0, 0, 0)
+      knot.add(dia)
+
+      const leftArc = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.012, 12, 24, Math.PI), mat)
+      leftArc.rotation.x = -Math.PI / 2
+      leftArc.rotation.z = Math.PI / 2
+      leftArc.position.set(-0.06, depth * 0.8, 0)
+      
+      const rightArc = leftArc.clone()
+      rightArc.rotation.z = -Math.PI / 2
+      rightArc.position.set(0.06, depth * 0.8, 0)
+      
+      knot.add(leftArc, rightArc)
+
+      // Add one tiny glow accent in the middle knot
+      if (i === 2) {
+        const hLight = new THREE.Mesh(new THREE.SphereGeometry(0.02, 12, 12), glowMat)
+        hLight.position.set(0, depth * 1.6, 0)
+        knot.add(hLight)
+      }
+
+      knot.position.set(0, 0, sepZ)
+      g.add(knot)
+    }
   }
 
   return g
 }
 
-// ─── Small Star ────────────────────────────────────────────────
+// ─── 5. INTENTIONAL CELESTIAL DETAILS ──────────────────────────
 
-function createStarShape(
-  points: number,
-  outerR: number,
-  innerR: number
-): THREE.Shape {
+function createIntentionalCelestial(
+  mat: THREE.MeshStandardMaterial,
+  glowMat: THREE.MeshStandardMaterial,
+  cw: number,
+  ch: number,
+  depth: number
+): THREE.Group {
+  const g = new THREE.Group()
+  
+  // Create substantial celestial arcs that fill the mid-spaces
+  const createCelestialArc = (xSign: number, zSign: number) => {
+    const cg = new THREE.Group()
+    
+    const nodes = [
+      new THREE.Vector3(0.55, 0, 1.05),
+      new THREE.Vector3(0.75, 0, 1.45),
+      new THREE.Vector3(1.05, 0, 1.55),
+    ]
+    
+    // Large engraved stars at nodes
+    nodes.forEach((pos, idx) => {
+      const star = createFourPointStar(mat, 0.05, depth * 1.2)
+      star.position.copy(pos)
+      cg.add(star)
+
+      // Extremely faint glow core on just the middle star
+      if (idx === 1) {
+        const sCore = new THREE.Mesh(new THREE.SphereGeometry(0.02, 12, 12), glowMat)
+        sCore.position.copy(pos)
+        sCore.position.y = depth * 1.3
+        cg.add(sCore)
+      }
+    })
+
+    // Thick engraved connecting lines
+    for (let i = 0; i < nodes.length - 1; i++) {
+      const p1 = nodes[i]
+      const p2 = nodes[i + 1]
+      const dist = p1.distanceTo(p2)
+      const line = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, dist, 12), mat)
+      line.rotation.x = Math.PI / 2
+      const dx = p2.x - p1.x
+      const dz = p2.z - p1.z
+      line.rotation.z = -Math.atan2(dz, dx)
+      line.position.copy(p1).lerp(p2, 0.5)
+      line.position.y = depth * 0.6
+      cg.add(line)
+    }
+
+    // Large decorative crescent
+    const moon = new THREE.Mesh(
+      new THREE.TorusGeometry(0.12, 0.02, 16, 32, Math.PI * 1.1),
+      mat
+    )
+    moon.rotation.x = -Math.PI / 2
+    moon.rotation.z = Math.PI / 1.5
+    moon.position.set(0.9, depth * 0.8, 1.25)
+    cg.add(moon)
+
+    if (xSign === -1) cg.scale.x = -1
+    if (zSign === -1) cg.scale.z = -1
+    
+    return cg
+  }
+
+  g.add(createCelestialArc(1, 1))
+  g.add(createCelestialArc(-1, 1))
+  g.add(createCelestialArc(1, -1))
+  g.add(createCelestialArc(-1, -1))
+
+  return g
+}
+
+// ─── HELPERS ───────────────────────────────────────────────────
+
+function createStarShape(points: number, outerR: number, innerR: number): THREE.Shape {
   const shape = new THREE.Shape()
   for (let i = 0; i < points * 2; i++) {
     const angle = (i / (points * 2)) * Math.PI * 2 - Math.PI / 2
@@ -310,31 +451,19 @@ function createStarShape(
   return shape
 }
 
-function createFourPointStar(
-  material: THREE.MeshStandardMaterial,
-  size: number,
-  depth: number
-): THREE.Group {
+function createFourPointStar(mat: THREE.MeshStandardMaterial, size: number, depth: number): THREE.Group {
   const g = new THREE.Group()
-  const starShape = createStarShape(4, size, size * 0.35)
-  const geo = new THREE.ExtrudeGeometry(starShape, {
-    depth: depth,
-    bevelEnabled: false,
+  const geo = new THREE.ExtrudeGeometry(createStarShape(4, size, size * 0.35), {
+    depth, bevelEnabled: true, bevelSize: 0.005, bevelThickness: 0.005
   })
-  const mesh = new THREE.Mesh(geo, material)
+  const mesh = new THREE.Mesh(geo, mat)
   mesh.rotation.x = -Math.PI / 2
-  mesh.position.y = depth * 0.5
+  mesh.position.y = 0
   g.add(mesh)
   return g
 }
 
-// ─── Diamond ───────────────────────────────────────────────────
-
-function createDiamond(
-  material: THREE.MeshStandardMaterial,
-  size: number,
-  depth: number
-): THREE.Group {
+function createDiamond(mat: THREE.MeshStandardMaterial, size: number, depth: number): THREE.Group {
   const g = new THREE.Group()
   const shape = new THREE.Shape()
   shape.moveTo(0, size)
@@ -342,54 +471,36 @@ function createDiamond(
   shape.lineTo(0, -size)
   shape.lineTo(-size * 0.5, 0)
   shape.closePath()
-
   const geo = new THREE.ExtrudeGeometry(shape, {
-    depth: depth,
-    bevelEnabled: false,
+    depth, bevelEnabled: true, bevelSize: 0.008, bevelThickness: 0.008
   })
-  const mesh = new THREE.Mesh(geo, material)
+  const mesh = new THREE.Mesh(geo, mat)
   mesh.rotation.x = -Math.PI / 2
-  mesh.position.y = depth * 0.5
+  mesh.position.y = 0
   g.add(mesh)
   return g
 }
 
-// ─── Clasp ─────────────────────────────────────────────────────
-
-function createClasp(
-  material: THREE.MeshStandardMaterial,
-  depth: number
-): THREE.Group {
+function createClasp(mat: THREE.MeshStandardMaterial, depth: number): THREE.Group {
   const g = new THREE.Group()
+  // Keep the clasp proportional to the new thicker geometry
+  const base = new THREE.Mesh(new THREE.BoxGeometry(0.12, depth * 2, 0.35), mat)
+  base.position.y = depth
+  
+  const baseRivet1 = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, depth * 2.5, 16), mat)
+  baseRivet1.position.set(0, depth * 1.25, 0.12)
+  
+  const baseRivet2 = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, depth * 2.5, 16), mat)
+  baseRivet2.position.set(0, depth * 1.25, -0.12)
+  
+  g.add(base, baseRivet1, baseRivet2)
 
-  // Base plate
-  const base = new THREE.Mesh(
-    new THREE.BoxGeometry(0.12, depth * 2, 0.35),
-    material
-  )
-  // Give base plate some rounded features
-  const baseRivet1 = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, depth*2.5, 16), material)
-  baseRivet1.position.set(0, 0, 0.12)
-  g.add(baseRivet1)
-  const baseRivet2 = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, depth*2.5, 16), material)
-  baseRivet2.position.set(0, 0, -0.12)
-  g.add(baseRivet2)
-  g.add(base)
-
-  // Swing arm
-  const arm = new THREE.Mesh(
-    new THREE.BoxGeometry(0.12, depth * 2.5, 0.1),
-    material
-  )
-  arm.position.set(0.08, 0, 0)
+  const arm = new THREE.Mesh(new THREE.BoxGeometry(0.12, depth * 2.5, 0.1), mat)
+  arm.position.set(0.08, depth * 1.25, 0)
   g.add(arm)
 
-  // Latch knob
-  const knob = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.025, 0.025, depth * 3, 8),
-    material
-  )
-  knob.position.set(0.12, 0, 0)
+  const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, depth * 3, 12), mat)
+  knob.position.set(0.12, depth * 1.5, 0)
   g.add(knob)
 
   return g

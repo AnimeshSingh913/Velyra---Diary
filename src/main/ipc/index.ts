@@ -1,4 +1,4 @@
-import { ipcMain, dialog, BrowserWindow } from 'electron'
+import { ipcMain, dialog, BrowserWindow, shell } from 'electron'
 import { v4 as uuidv4 } from 'uuid'
 import { copyFileSync, statSync, existsSync, unlinkSync } from 'fs'
 import { join, extname, basename } from 'path'
@@ -637,7 +637,8 @@ export function registerIpcHandlers(): void {
     try {
       const row = queryOne('SELECT file_path FROM media WHERE id = ?', [mediaId])
       if (!row) return null
-      return `diary-media://${(row.file_path as string).replace(/\\/g, '/')}`
+      
+      return `diary-media://asset/${mediaId}`
     } catch (err) {
       console.error('[Media] Error getting path:', err)
       return null
@@ -994,6 +995,20 @@ export function registerIpcHandlers(): void {
     } catch (err) {
       console.error('[Backup] Import error:', err)
       return { success: false, error: 'Failed to import backup.' }
+    }
+  })
+
+  // ─── System ───────────────────────────────────────────────────
+  ipcMain.handle('system:open-external', async (_event, url: string) => {
+    try {
+      const parsed = new URL(url)
+      if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+        await shell.openExternal(url)
+        return { success: true }
+      }
+      return { success: false, error: 'Invalid protocol' }
+    } catch (err) {
+      return { success: false, error: String(err) }
     }
   })
 

@@ -1,7 +1,7 @@
 import { app, BrowserWindow, protocol, net } from 'electron'
-import { join } from 'path'
+import { join, resolve } from 'path'
 import { existsSync } from 'fs'
-import { initDatabase, closeDatabase } from './database/database'
+import { initDatabase, closeDatabase, queryOne, getDatabase } from './database/database'
 import { registerIpcHandlers } from './ipc'
 import { ensureAppDirectories } from './storage/paths'
 
@@ -76,19 +76,56 @@ app.whenReady().then(async () => {
 
   // Register protocol handler for serving local media files
   protocol.handle('diary-media', (request) => {
-    // diary-media://media/path/to/file -> file path
-    const url = new URL(request.url)
-    // The pathname contains the file path (URL-encoded)
-    let filePath = decodeURIComponent(url.pathname)
-    // On Windows, remove leading slash from /C:/path/to/file
-    if (process.platform === 'win32' && filePath.startsWith('/')) {
-      filePath = filePath.slice(1)
+    try {
+      // 1. Extract the media ID from the URL (e.g. diary-media://asset/<uuid>)
+      const urlMatch = request.url.match(/^diary-media:\/\/asset\/(.+)$/i)
+      if (!urlMatch) {
+        console.warn(`[Security] Invalid protocol URL format: ${request.url}`)
+        return new Response('Bad Request', { status: 400 })
+      }
+      
+      const mediaId = urlMatch[1]
+      
+      // 2. Look up the physical file path in the database
+      const db = getDatabase()
+      const stmt = db.prepare('SELECT file_path FROM media WHERE id = ?')
+      stmt.bind([mediaId])
+      
+      let filePath = null
+      if (stmt.step()) {
+        const row = stmt.getAsObject()
+        filePath = row.file_path as string
+      }
+      stmt.free()
+      
+      if (!filePath) {
+        console.warn(`[Media] No database record found for media ID: ${mediaId}`)
+        return new Response('File not found', { status: 404 })
+      }
+      
+      // 3. Resolve path and perform security checks
+      const allowedDir = resolve(app.getPath('userData'), 'diary-data')
+      const resolvedPath = resolve(filePath)
+      const fsExists = existsSync(resolvedPath)
+      const isFile = fsExists ? require('fs').statSync(resolvedPath).isFile() : false
+      const passesSecurity = resolvedPath.startsWith(allowedDir)
+      
+      if (!passesSecurity) {
+        console.warn(`[Security] Blocked unauthorized media access: ${resolvedPath}`)
+        return new Response('Forbidden', { status: 403 })
+      }
+
+      if (!fsExists || !isFile) {
+        return new Response('File not found', { status: 404 })
+      }
+      
+      // 4. Fetch the file safely
+      const fetchUrl = `file:///${resolvedPath.replace(/\\/g, '/')}`
+      return net.fetch(fetchUrl)
+    } catch (err) {
+      console.error('[Media] Protocol handle error:', err)
+      return new Response('Bad Request', { status: 400 })
     }
-    // Security: only serve files that exist
-    if (!existsSync(filePath)) {
-      return new Response('File not found', { status: 404 })
-    }
-    return net.fetch(`file:///${filePath.replace(/\\/g, '/')}`)
   })
   console.log('[Main] Media protocol registered')
 

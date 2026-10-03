@@ -6,6 +6,12 @@ export function ResizableMediaNodeView(props: NodeViewProps) {
   const { src, width, align, wrap, mediaId } = node.attrs
   const isVideo = extension.name === 'resizableVideo' || node.type.name === 'resizableVideo'
   
+  // Use the opaque asset URL format, falling back to src if mediaId is missing
+  let displaySrc = src
+  if (mediaId) {
+    displaySrc = `diary-media://asset/${mediaId}`
+  }
+
   const [isResizing, setIsResizing] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -80,13 +86,13 @@ export function ResizableMediaNodeView(props: NodeViewProps) {
       >
         {isVideo ? (
           <video 
-            src={src} 
+            src={displaySrc} 
             controls 
             style={{ width: '100%', display: 'block', borderRadius: '4px' }}
           />
         ) : (
           <img 
-            src={src} 
+            src={displaySrc} 
             alt="media" 
             style={{ width: '100%', display: 'block', borderRadius: '4px' }}
             draggable={false}
@@ -127,6 +133,7 @@ export function ResizableMediaNodeView(props: NodeViewProps) {
                 <span style={{ fontSize: '10px', padding: '0 4px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Size</span>
                 <button className="toolbar-btn" onMouseDown={(e) => { e.preventDefault(); setSize('25%') }} title="Small">S</button>
                 <button className="toolbar-btn" onMouseDown={(e) => { e.preventDefault(); setSize('50%') }} title="Medium">M</button>
+                <button className="toolbar-btn" onMouseDown={(e) => { e.preventDefault(); setSize('75%') }} title="Large">L</button>
                 <button className="toolbar-btn" onMouseDown={(e) => { e.preventDefault(); setSize('100%') }} title="Full">F</button>
                 <span style={{ borderLeft: '1px solid var(--border-subtle)', margin: '0 4px', height: '16px' }} />
                 
@@ -139,6 +146,9 @@ export function ResizableMediaNodeView(props: NodeViewProps) {
                 <span style={{ fontSize: '10px', padding: '0 4px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Wrap</span>
                 <button className="toolbar-btn" onMouseDown={(e) => { e.preventDefault(); setWrap('left') }} title="Wrap Left">◧≡</button>
                 <button className="toolbar-btn" onMouseDown={(e) => { e.preventDefault(); setWrap('right') }} title="Wrap Right">≡◨</button>
+                <span style={{ borderLeft: '1px solid var(--border-subtle)', margin: '0 4px', height: '16px' }} />
+                
+                <button className="toolbar-btn" style={{ color: '#b43228' }} onMouseDown={(e) => { e.preventDefault(); props.deleteNode() }} title="Delete">✕</button>
               </div>
             )}
           </>

@@ -10,6 +10,15 @@ import FontFamily from '@tiptap/extension-font-family'
 import Placeholder from '@tiptap/extension-placeholder'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
+import Strike from '@tiptap/extension-strike'
+import Superscript from '@tiptap/extension-superscript'
+import Subscript from '@tiptap/extension-subscript'
+import Link from '@tiptap/extension-link'
+import Table from '@tiptap/extension-table'
+import TableRow from '@tiptap/extension-table-row'
+import TableHeader from '@tiptap/extension-table-header'
+import TableCell from '@tiptap/extension-table-cell'
+import { Indent } from './extensions/Indent'
 import { FontSize } from './extensions/FontSize'
 import { ResizableImage } from './extensions/ResizableImage'
 import { ResizableVideo } from './extensions/ResizableVideo'
@@ -77,6 +86,22 @@ export function DiaryEditor({
       TaskItem.configure({
         nested: true,
       }),
+      Strike,
+      Superscript,
+      Subscript,
+      Link.configure({
+        openOnClick: false, // User will explicitly open links via toolbar if needed, or ctrl+click
+        HTMLAttributes: {
+          class: 'diary-link',
+        },
+      }),
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      Indent,
       ResizableImage,
       ResizableVideo,
     ],
@@ -117,11 +142,12 @@ export function DiaryEditor({
 
   const handleImportImage = useCallback(async () => {
     if (!editor) return
+    const { from } = editor.state.selection
     const res = await window.diaryAPI.media.importImage(pageId, entryId)
     if (res.success && res.media) {
       const src = await window.diaryAPI.media.getPath(res.media.id)
       if (src) {
-        editor.chain().focus().insertContent({
+        editor.chain().focus().insertContentAt(from, {
           type: 'resizableImage',
           attrs: { src, mediaId: res.media.id, width: '50%' }
         }).run()
@@ -131,11 +157,12 @@ export function DiaryEditor({
 
   const handleImportVideo = useCallback(async () => {
     if (!editor) return
+    const { from } = editor.state.selection
     const res = await window.diaryAPI.media.importVideo(pageId, entryId)
     if (res.success && res.media) {
       const src = await window.diaryAPI.media.getPath(res.media.id)
       if (src) {
-        editor.chain().focus().insertContent({
+        editor.chain().focus().insertContentAt(from, {
           type: 'resizableVideo',
           attrs: { src, mediaId: res.media.id, width: '50%' }
         }).run()

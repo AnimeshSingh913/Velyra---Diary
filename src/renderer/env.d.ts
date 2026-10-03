@@ -44,6 +44,9 @@ interface DiaryAPI {
     export: () => Promise<{ success: boolean; canceled?: boolean; path?: string; error?: string }>
     import: () => Promise<{ success: boolean; canceled?: boolean; error?: string }>
   }
+  system: {
+    openExternal: (url: string) => Promise<{ success: boolean; error?: string }>
+  }
 }
 
 declare global {

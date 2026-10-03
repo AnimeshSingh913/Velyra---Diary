@@ -37,12 +37,16 @@ export function EditorToolbar({ editor, onInsertImage, onInsertVideo }: EditorTo
   const [showHighlightPicker, setShowHighlightPicker] = useState(false)
   const [showFontMenu, setShowFontMenu] = useState(false)
   const [showSizeMenu, setShowSizeMenu] = useState(false)
+  const [showLinkPrompt, setShowLinkPrompt] = useState(false)
+  const [linkUrl, setLinkUrl] = useState('')
+  const [savedSelection, setSavedSelection] = useState<any>(null)
 
   const closeAllMenus = useCallback(() => {
     setShowColorPicker(false)
     setShowHighlightPicker(false)
     setShowFontMenu(false)
     setShowSizeMenu(false)
+    setShowLinkPrompt(false)
   }, [])
 
   return (
@@ -189,6 +193,107 @@ export function EditorToolbar({ editor, onInsertImage, onInsertVideo }: EditorTo
             onClick={() => editor.chain().focus().toggleStrike().run()}
             className="toolbar-btn--strike"
           />
+          <ToolbarButton
+            icon="X²"
+            title="Superscript"
+            active={editor.isActive('superscript')}
+            onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          />
+          <ToolbarButton
+            icon="X₂"
+            title="Subscript"
+            active={editor.isActive('subscript')}
+            onClick={() => editor.chain().focus().toggleSubscript().run()}
+          />
+          <ToolbarButton
+            icon="Tₓ"
+            title="Clear Formatting"
+            onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
+          />
+          <div className="toolbar-divider" />
+          <div className="toolbar-group toolbar-group--dropdown">
+            <ToolbarButton
+              icon="🔗"
+              title="Link"
+              active={editor.isActive('link')}
+              onClick={() => {
+                if (editor.isActive('link')) {
+                  editor.chain().focus().unsetLink().run()
+                } else {
+                  closeAllMenus()
+                  setSavedSelection(editor.state.selection)
+                  setLinkUrl('')
+                  setShowLinkPrompt(!showLinkPrompt)
+                }
+              }}
+            />
+            {showLinkPrompt && (
+              <div className="toolbar-dropdown-menu" style={{ padding: '8px', display: 'flex', gap: '4px', zIndex: 10 }}>
+                <input
+                  type="url"
+                  placeholder="https://..."
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      if (linkUrl) {
+                        editor.chain().focus().setTextSelection(savedSelection).setLink({ href: linkUrl }).run()
+                      } else {
+                        editor.chain().focus().setTextSelection(savedSelection).run()
+                      }
+                      setShowLinkPrompt(false)
+                    } else if (e.key === 'Escape') {
+                      editor.chain().focus().setTextSelection(savedSelection).run()
+                      setShowLinkPrompt(false)
+                    }
+                  }}
+                  autoFocus
+                  style={{
+                    padding: '4px 8px',
+                    border: '1px solid rgba(160, 130, 80, 0.3)',
+                    borderRadius: '4px',
+                    fontSize: '13px',
+                    outline: 'none',
+                    width: '200px'
+                  }}
+                />
+                <button
+                  onClick={() => {
+                    if (linkUrl) {
+                      editor.chain().focus().setTextSelection(savedSelection).setLink({ href: linkUrl }).run()
+                    } else {
+                      editor.chain().focus().setTextSelection(savedSelection).run()
+                    }
+                    setShowLinkPrompt(false)
+                  }}
+                  style={{
+                    padding: '4px 8px',
+                    background: '#8a7060',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '13px'
+                  }}
+                >
+                  Apply
+                </button>
+              </div>
+            )}
+          </div>
+          {editor.isActive('link') && (
+            <ToolbarButton
+              icon="↗"
+              title="Open Link in Browser"
+              onClick={() => {
+                const href = editor.getAttributes('link').href
+                if (href) {
+                  window.diaryAPI?.system?.openExternal(href)
+                }
+              }}
+            />
+          )}
         </div>
 
         <div className="toolbar-divider" />
@@ -283,6 +388,17 @@ export function EditorToolbar({ editor, onInsertImage, onInsertVideo }: EditorTo
             active={editor.isActive({ textAlign: 'justify' })}
             onClick={() => editor.chain().focus().setTextAlign('justify').run()}
           />
+          <div className="toolbar-divider" />
+          <ToolbarButton
+            icon="⇥"
+            title="Increase Indent (Tab)"
+            onClick={() => editor.commands.indent()}
+          />
+          <ToolbarButton
+            icon="⇤"
+            title="Decrease Indent (Shift+Tab)"
+            onClick={() => editor.commands.outdent()}
+          />
         </div>
 
         <div className="toolbar-divider" />
@@ -335,12 +451,29 @@ export function EditorToolbar({ editor, onInsertImage, onInsertVideo }: EditorTo
             onClick={() => editor.chain().focus().setHorizontalRule().run()}
           />
           <ToolbarButton
-            icon="⌧"
-            title="Clear Formatting"
-            onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}
+            icon="⊞"
+            title="Insert Table"
+            onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
           />
         </div>
       </div>
+
+      {/* Row 3: Table Controls (Contextual) */}
+      {editor.isActive('table') && (
+        <div className="editor-toolbar__row" style={{ background: 'rgba(180, 148, 64, 0.1)', borderTop: '1px solid rgba(160, 130, 80, 0.15)' }}>
+          <div className="toolbar-group">
+            <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#5a4030', marginRight: '8px' }}>Table:</span>
+            <ToolbarButton icon="+Row" title="Add Row Below" onClick={() => editor.chain().focus().addRowAfter().run()} />
+            <ToolbarButton icon="-Row" title="Delete Row" onClick={() => editor.chain().focus().deleteRow().run()} />
+            <ToolbarButton icon="+Col" title="Add Column After" onClick={() => editor.chain().focus().addColumnAfter().run()} />
+            <ToolbarButton icon="-Col" title="Delete Column" onClick={() => editor.chain().focus().deleteColumn().run()} />
+            <div className="toolbar-divider" />
+            <ToolbarButton icon="Merge" title="Merge/Split Cells" onClick={() => editor.chain().focus().mergeOrSplit().run()} />
+            <div className="toolbar-divider" />
+            <ToolbarButton icon="Del Table" title="Delete Table" onClick={() => editor.chain().focus().deleteTable().run()} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

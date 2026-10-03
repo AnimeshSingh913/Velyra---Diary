@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import { DiaryScene } from './DiaryScene'
-import bgImage from '../../assets/diary_background.png'
-import bgImageBlurred from '../../assets/diary_background_blurred.png'
+import bgImage from '../../assets/moonlit_enchanted_study.png'
+import bgImageBlurred from '../../assets/moonlit_enchanted_study_blurred.png'
 
 
 interface DiarySceneReactProps {

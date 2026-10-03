@@ -104,6 +104,10 @@ const diaryAPI = {
     import: (): Promise<unknown> =>
       ipcRenderer.invoke('backup:import'),
   },
+  system: {
+    openExternal: (url: string): Promise<unknown> =>
+      ipcRenderer.invoke('system:open-external', url),
+  }
 }
 
 // Expose the API to the renderer's window object
